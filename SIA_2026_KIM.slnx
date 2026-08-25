@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="SIA_2026_KIM.Shared/SIA_2026_KIM.Shared.csproj" />
+  <Project Path="SIA_2026_KIM.Web/SIA_2026_KIM.Web.csproj" />
+  <Project Path="SIA_2026_KIM/SIA_2026_KIM.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>
