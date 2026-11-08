@@ -11,13 +11,21 @@
     <link rel="stylesheet" href="SIA_2026_KIM.Web.styles.css" />
     <ImportMap />
     <link rel="icon" type="image/png" href="_content/SIA_2026_KIM.Shared/favicon.png" />
-    <HeadOutlet @rendermode="InteractiveServer" />
+    <HeadOutlet @rendermode="DynamicRenderMode" />
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveServer" />
+    <Routes @rendermode="DynamicRenderMode" />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
+
+@code{
+    [CascadingParameter]
+    public HttpContext HttpContext { get; set; } = default!;
+
+    public IComponentRenderMode? DynamicRenderMode => 
+        HttpContext!.AcceptsInteractiveRouting() ? InteractiveServer : null;
+}
 
 </html>

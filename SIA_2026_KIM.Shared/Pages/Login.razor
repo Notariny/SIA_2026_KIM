@@ -1,36 +1,85 @@
 ﻿@page "/login"
+
+@attribute [ExcludeFromInteractiveRouting]
+
 @using SIA_2026_KIM.Shared.DModel
 
+@inject NavigationManager NavigationManager
+
+@inject IAuthService AuthService
+
 <div class="vh-100 d-flex justify-content-center align-items-center container">
-	<div class="card w-100 p-4 shadow-sm" style="max-width: 400px; border-radius : 1px;">
-		<EditForm Model="_loginModel">
-			<DataAnnotationsValidator />
+    <div class="card w-100 p-4 shadow-sm" style="max-width: 400px; border-radius : 1px;">
+        <EditForm Model="LoginModel" method="post" OnValidSubmit="LoginAsync" FormName="login-form">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-			<div class="mb-3">
-				<label class="form-label">Username</label>
-				<InputText class="form-control" @bind-Value="_loginModel.UserName" placeholder="Enter username" />
-				<ValidationMessage For="() => _loginModel.UserName"/>
-			</div>
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <InputText class="form-control" @bind-Value="LoginModel.UserName" placeholder="Enter username" />
+                <ValidationMessage For="() => LoginModel.UserName" />
+            </div>
 
-			<div class="mb-3">
-				<label class="form-label">Password</label>
-				<InputText class="form-control" @bind-Value="_loginModel.Password" placeholder="Enter password" />
-				<ValidationMessage For="() => _loginModel.Password" />
-			</div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <InputText type="password" class="form-control" @bind-Value="LoginModel.Password" placeholder="Enter password" />
+                <ValidationMessage For="() => LoginModel.Password" />
+            </div>
 
-			<div class="mb-4 text-center">
-				<div class="test-muted small mb-0">
-					<button class="btn btn-primary fw-smibold w-100 py-2" type="submit">Login</button>
-					<hr />
-					<NavLink class="text-decoration-none" href="register">Don't have an account? Register here</NavLink>
-				</div>
+            @if (_errorMessage is not null)
+            {
+                <div class="alert alert-danger d-flex justify-content-between align-items-center mt-3" role="alert" id="err">
+                    <label>@_errorMessage</label>
 
-				
-			</div>
-		</EditForm>
-	</div>
+                    <button type="button"
+                            class="btn-close"
+                            aria-label="Close"
+                            onclick="document.getElementById('err').remove()">
+                    </button>
+                </div>
+            }
+
+            <div class="mb-4 text-center">
+                <div class="test-muted small mb-0">
+                    <button class="btn btn-primary fw-smibold w-100 py-2" type="submit">Login</button>
+                    <hr />
+                    <NavLink class="text-decoration-none" href="register">Don't have an account? Register here</NavLink>
+                </div>
+            </div>
+        </EditForm>
+    </div>
 </div>
 
 @code {
-	private LoginModel _loginModel = new();
+    [SupplyParameterFromForm(FormName = "login-form")]
+    public LoginModel LoginModel { get; set; } = new();
+
+    private string? _errorMessage;
+
+    private async Task LoginAsync()
+    {
+        _errorMessage = null;
+        var result = await AuthService.LoginAsync(LoginModel);
+
+        if (!result.IsSuccess)
+        {
+            _errorMessage = result.Error ?? "Login failed (no error message returned).";
+            return;
+        }
+
+        //Login successful
+        //Set the authstate (Cookies in HttpContext)
+        //Return to the next page
+
+        var loggedInUser = result.Data;
+
+        var platformLoginResult = await AuthService.PlatformLoginAsync(loggedInUser);
+        if (!platformLoginResult.IsSuccess)
+        {
+            _errorMessage = platformLoginResult.Error ?? "Login failed (no error message returned).";
+            return;
+        }
+
+        NavigationManager.NavigateTo("/", replace: true);
+    }
 }

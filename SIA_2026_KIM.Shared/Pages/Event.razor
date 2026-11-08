@@ -1,0 +1,66 @@
+﻿@page "/event"
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
+<div class="vh-100 d-flex justify-content-center align-items-center container">
+
+    <div class="card w-100 p-4 shadow-sm" style="max-width: 400px; border-radius: 12px;">
+        <h3 class="text-primary fw-bold text-center">JYKim Midterm Exam</h3>
+        <h5 class="text-secondary text-center">Create a new event record</h5>
+        <EditForm Model="_eventModel" OnValidSubmit="EventAsync">
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <InputText class="form-control" @bind-Value="_eventModel.Title" placeholder="Enter Title" />
+                <ValidationMessage For="() => _eventModel.Title" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Date</label>
+                <InputText class="form-control" @bind-Value="_eventModel.Date" placeholder="Enter Date(YYYY-MM-DD)" />
+                <ValidationMessage For="() => _eventModel.Date" />
+            </div>
+            <div  style="display:flex; align-items:center; justify-items:center; gap:5px">
+                <div class="mb-3">
+                    <label class="form-label">Time</label>
+                    <InputText class="form-control" @bind-Value="_eventModel.Time" placeholder="Enter Time (HH:MM)" />
+                    <ValidationMessage For="() => _eventModel.Time" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Venue</label>
+                    <InputText class="form-control" @bind-Value="_eventModel.Venue" placeholder="Enter Venue" />
+                    <ValidationMessage For="() => _eventModel.Venue" />
+                </div>
+            </div>
+    
+            <div class="mb-3">
+                <label class="form-label">Details</label>
+                <InputText class="form-control" @bind-Value="_eventModel.Details" placeholder="Enter Details" />
+                <ValidationMessage For="() => _eventModel.Details" />
+            </div>
+          
+            <div class="mt-4 text-center">
+                <div class="text-muted small mb-0">
+                    <button class="btn btn-primary fw-semibold w-100 py-2" type="submit">Save Event</button>
+                    <hr />
+                    <NavLink class="text-decor-none" href="login">Back to Event List</NavLink>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private EventModel _eventModel = new();
+
+    private async Task EventAsync ()
+    {
+
+      
+        var result = await AuthService.EventAsync(_eventModel);
+
+        
+
+        NavigationManager.NavigateTo("login");
+    }
+}

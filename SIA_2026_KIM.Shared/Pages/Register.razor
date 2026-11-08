@@ -1,48 +1,77 @@
 ﻿@page "/register"
-@using SIA_2026_KIM.Shared.DModel
+
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
 
 <div class="vh-100 d-flex justify-content-center align-items-center container">
-	<div class="card w-100 p-4 shadow-sm" style="max-width: 400px; border-radius : 1px;">
-		<EditForm Model="_registerModel">
-			<DataAnnotationsValidator />
 
-			<h1 style="color: dodgerblue;">JYKim Blazor App</h1>
+    <div class="card w-100 p-4 shadow-sm" style="max-width: 400px; border-radius: 12px;">
+        <h3 class="text-primary fw-bold text-center" >JYKim Blazor App</h3>
+        <h5 class="text-secondary text-center">Please register a new account</h5>
+        <EditForm Model="_registerModel" OnValidSubmit="RegisterAsync">
+            <DataAnnotationsValidator />
+            
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <InputText class="form-control" @bind-Value="_registerModel.Name" placeholder="Enter Name" />
+                <ValidationMessage For="() => _registerModel.Name"  />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <InputText class="form-control" @bind-Value="_registerModel.Username" placeholder="Enter Username" />
+                <ValidationMessage For="() => _registerModel.Username" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <InputText class="form-control" @bind-Value="_registerModel.Email" placeholder="Enter Email" />
+                <ValidationMessage For="() => _registerModel.Email"  />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <InputText class="form-control" @bind-Value="_registerModel.Password" placeholder="Enter Password" />
+                <ValidationMessage For="() => _registerModel.Password"  />
+            </div>
+            @if (_errorMessage is not null)
+            {
+                <div class="alert alert-danger d-flex justify-content-between align-items-center mt-3" role="alert">
+                    <span>@_errorMessage</span>
 
-			<div class="mb-3">
-				<label class="form-label">Name</label>
-				<InputText class="form-control" @bind-Value="_registerModel.Name" placeholder="Enter name" />
-				<ValidationMessage For="() => _registerModel.Name"/>
-			</div>
-
-			<div class="mb-3">
-				<label class="form-label">Username</label>
-				<InputText class="form-control" @bind-Value="_registerModel.Username" placeholder="Enter Username" />
-				<ValidationMessage For="() => _registerModel.Username"/>
-			</div>
-
-			<div class="mb-3">
-				<label class="form-label">Email</label>
-				<InputText class="form-control" @bind-Value="_registerModel.Email" placeholder="Enter Email" />
-				<ValidationMessage For="() => _registerModel.Email"/>
-			</div>
-
-			<div class="mb-3">
-				<label class="form-label">Password</label>
-				<InputText class="form-control" @bind-Value="_registerModel.Password" placeholder="Enter password" />
-				<ValidationMessage For="() => _registerModel.Password"/>
-			</div>
-
-			<div class="mb-4 text-center">
-				<div class="test-muted small mb-0">
-					<button class="btn btn-primary fw-smibold w-100 py-2" type="submit">Register</button>
-					<hr />
-					<NavLink class="text-decoration-none" href="login">Already have an account? Login here</NavLink>
-				</div>
-			</div>
-		</EditForm>
-	</div>
+                    <button type="button"
+                            class="btn-close"
+                            aria-label="Close"
+                            @onclick="() => _errorMessage = null">
+                    </button>
+                </div>
+            }
+            <div class="mt-4 text-center">
+                <div class="text-muted small mb-0">
+                    <button class="btn btn-primary fw-semibold w-100 py-2" type="submit">Register</button>
+                    <hr />
+                    <NavLink class="text-decor-none" href="login">Existing account? Login</NavLink>
+                </div>
+            </div>
+        </EditForm>
+    </div>
 </div>
 
 @code {
-	private RegisterModel _registerModel = new();
+    private RegisterModel _registerModel = new();
+    private string? _errorMessage;
+    private async Task RegisterAsync()
+    {
+
+        _errorMessage = null;
+
+        var result = await AuthService.RegisterAsync(_registerModel);
+
+        if(!result.IsSuccess)
+        {
+            // alert for error
+            _errorMessage = result.Error;
+            return;
+        }
+
+        // Registration successful
+        NavigationManager.NavigateTo("/login", forceLoad: true);
+    }
 }
