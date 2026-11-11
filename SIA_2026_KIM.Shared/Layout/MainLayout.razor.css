@@ -1,98 +1,126 @@
-.page {
-    position: relative;
+/* App shell: sidebar + content */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+    background-color: #eef2f3;
+}
+
+.sidebar-toggle {
+    display: none;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
+    background-color: #ffffff;
+    border-right: 1px solid #dfe3e6;
+    transition: margin-left 0.2s ease;
 }
 
-main {
-    flex: 1;
-}
-
-.sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
-}
-
-.top-row {
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #d6d5d5;
-    justify-content: flex-end;
-    height: 3.5rem;
+.sidebar-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #e6e9eb;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
-
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
-
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-@media (max-width: 640.98px) {
-    .top-row {
-        justify-content: space-between;
-    }
-
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        margin-left: 0;
-    }
+.sidebar-title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2b2f33;
 }
 
-@media (min-width: 641px) {
-    .page {
-        flex-direction: row;
-    }
-
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
-
-    .top-row {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-    }
-
-    .top-row.auth ::deep a:first-child {
-        flex: 1;
-        text-align: right;
-        width: 0;
-    }
-
-    .top-row, article {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }
+.sidebar-body {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    color: #4a5056;
+    overflow-y: auto;
 }
 
-#blazor-error-ui {
-    color-scheme: light only;
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
+/* Footer: user + logout */
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem;
+}
+
+.sidebar-user {
+    font-weight: 600;
+    color: #2e8b57;
+}
+
+.btn-logout {
     width: 100%;
-    z-index: 1000;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #f87171;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
+    .btn-logout:hover {
+        background-color: #ef5350;
     }
+
+/* Hamburger button (blue rounded square, three white bars) */
+.hamburger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 38px;
+    height: 38px;
+    border-radius: 0.5rem;
+    background-color: #3b6fd4;
+    cursor: pointer;
+}
+
+    .hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background-color: #ffffff;
+        border-radius: 1px;
+    }
+
+    .hamburger:hover {
+        background-color: #2f5bb5;
+    }
+
+/* The "open" button lives in the content area and only shows when the sidebar is collapsed */
+.hamburger-open {
+    display: none;
+    position: fixed;
+    top: 0.9rem;
+    left: 0.9rem;
+    z-index: 10;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    min-width: 0;
+    padding: 1rem 1.5rem;
+}
+
+/* Collapsed state (checkbox checked) */
+.sidebar-toggle:checked ~ .sidebar {
+    margin-left: -280px;
+}
+
+.sidebar-toggle:checked ~ .content .hamburger-open {
+    display: inline-flex;
+}
+
+.sidebar-toggle:checked ~ .content {
+    padding-left: 4rem;
+}

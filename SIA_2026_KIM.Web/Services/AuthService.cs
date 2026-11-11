@@ -24,7 +24,7 @@ namespace SIA_2026_KIM.Web.Services
         }
         public async Task<MethodResult<LoggedInUser>> LoginAsync(LoginModel model)
         {
-            var context = _contextFactory.CreateDbContext();
+            await using var context = _contextFactory.CreateDbContext();
             var user = await context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
 
             if (user is null)
@@ -45,6 +45,8 @@ namespace SIA_2026_KIM.Web.Services
         {
             //Login using Cookies in HttpContext
             var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext is null)
+                return MethodResult.Fail("No active HTTP context");
 
             Claim[] claims = [
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -54,6 +56,19 @@ namespace SIA_2026_KIM.Web.Services
             var principal = new ClaimsPrincipal(identity);
 
             await httpContext.SignInAsync(WebConstants.WebAuthScheme, principal);
+
+            return MethodResult.Ok();
+        }
+
+
+        public async Task<MethodResult> PlatformLogoutAsync()
+        {
+            //Remove the auth cookie from HttpContext
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext is null)
+                return MethodResult.Fail("No active HTTP context");
+
+            await httpContext.SignOutAsync(WebConstants.WebAuthScheme);
 
             return MethodResult.Ok();
         }

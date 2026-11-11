@@ -69,6 +69,13 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 
+// Logout: a plain form POST (static SSR can't clear cookies from an interactive circuit)
+app.MapPost("/logout", async (IAuthService authService) =>
+{
+    await authService.PlatformLogoutAsync();
+    return Results.Redirect("/login");
+}).DisableAntiforgery();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(typeof(SIA_2026_KIM.Shared._Imports).Assembly);

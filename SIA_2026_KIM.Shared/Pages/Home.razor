@@ -1,31 +1,7 @@
 ﻿@page "/"
-@using SIA_2026_KIM.Shared.Services
-@inject IFormFactor FormFactor
-@inject NavigationManager NavigationManager
 
 @attribute [Authorize]
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Notes</PageTitle>
 
-<h1>Hello, @_name!</h1>
-
-Welcome to your new app running on <em>@factor</em> using <em>@platform</em>.
-
-@code {
-
-    [CascadingParameter]
-    public Task<AuthenticationState> AuthStateTask { get; set; }
-
-    private string factor => FormFactor.GetFormFactor();
-    private string platform => FormFactor.GetPlatform();
-
-    //protected override void OnInitialized() =>
-    //    NavigationManager.NavigateTo("login");
-
-    private string _name = "";
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateTask;
-        _name = authState.User.Identity?.Name ?? "No Identity";
-    }
-}
+<NoteEditor />

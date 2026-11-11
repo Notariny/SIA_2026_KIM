@@ -1,5 +1,40 @@
 ﻿@inherits LayoutComponentBase
 
-@Body
+<AuthorizeView>
+    <Authorized>
+        <div class="app-shell">
+            @* CSS-only sidebar toggle: works even before the interactive circuit connects *@
+            <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
 
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">Notes</div>
+                    <label for="sidebar-toggle" class="hamburger" title="Toggle sidebar" aria-label="Toggle sidebar">
+                        <span></span><span></span><span></span>
+                    </label>
+                </div>
 
+                <div class="sidebar-body">
+                    <LeftSidebar />
+                </div>
+
+                <div class="sidebar-footer">
+                    <span class="sidebar-user">@context.User.Identity?.Name</span>
+                    <form method="post" action="/logout" class="m-0">
+                        <button type="submit" class="btn-logout">Logout</button>
+                    </form>
+                </div>
+            </aside>
+
+            <main class="content">
+                <label for="sidebar-toggle" class="hamburger hamburger-open" title="Open sidebar" aria-label="Open sidebar">
+                    <span></span><span></span><span></span>
+                </label>
+                @Body
+            </main>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @Body
+    </NotAuthorized>
+</AuthorizeView>

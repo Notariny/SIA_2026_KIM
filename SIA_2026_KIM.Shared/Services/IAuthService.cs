@@ -16,5 +16,7 @@ public  interface IAuthService
         Task<MethodResult> EventAsync(EventModel model);
 
         Task<MethodResult> PlatformLoginAsync(LoggedInUser user);
+
+        Task<MethodResult> PlatformLogoutAsync();
     }
 }
